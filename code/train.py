@@ -27,7 +27,6 @@ import os
 import copy
 import csv
 import time
-from itertools import izip
 from datetime import datetime
 from math import log
 
@@ -73,7 +72,7 @@ for row in spamreader: #the rows are "CaseID,ActivityID,CompleteTimestamp"
         times = []
         times2 = []
         numlines+=1
-    line+=unichr(int(row[1])+ascii_offset)
+    line+=chr(int(row[1])+ascii_offset)
     timesincelastevent = datetime.fromtimestamp(time.mktime(t))-datetime.fromtimestamp(time.mktime(lasteventtime))
     timesincecasestart = datetime.fromtimestamp(time.mktime(t))-datetime.fromtimestamp(time.mktime(casestarttime))
     timediff = 86400 * timesincelastevent.days + timesincelastevent.seconds
@@ -132,7 +131,7 @@ chars = map(lambda x: set(x),lines)
 chars = list(set().union(*chars))
 chars.sort()
 target_chars = copy.copy(chars)
-chars.remove('!')
+# chars.remove('!')
 print('total chars: {}, target chars: {}'.format(len(chars), len(target_chars)))
 char_indices = dict((c, i) for i, c in enumerate(chars))
 indices_char = dict((i, c) for i, c in enumerate(chars))
@@ -177,7 +176,7 @@ for row in spamreader:
         times3 = []
         times4 = []
         numlines+=1
-    line+=unichr(int(row[1])+ascii_offset)
+    line+=chr(int(row[1])+ascii_offset)
     timesincelastevent = datetime.fromtimestamp(time.mktime(t))-datetime.fromtimestamp(time.mktime(lasteventtime))
     timesincecasestart = datetime.fromtimestamp(time.mktime(t))-datetime.fromtimestamp(time.mktime(casestarttime))
     midnight = datetime.fromtimestamp(time.mktime(t)).replace(hour=0, minute=0, second=0, microsecond=0)
@@ -207,30 +206,42 @@ fold1_t = timeseqs[:elems_per_fold]
 fold1_t2 = timeseqs2[:elems_per_fold]
 fold1_t3 = timeseqs3[:elems_per_fold]
 fold1_t4 = timeseqs4[:elems_per_fold]
-with open('output_files/folds/fold1.csv', 'wb') as csvfile:
+with open('output_files/folds/fold1.csv', 'w') as csvfile:
     spamwriter = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-    for row, timeseq in izip(fold1, fold1_t):
-        spamwriter.writerow([unicode(s).encode("utf-8") +'#{}'.format(t) for s, t in izip(row, timeseq)])
+    for row, timeseq in zip(fold1, fold1_t):
+        # print(row[0] + '#{}'.format(timeseq[0]))
+        # print(timeseq)
+        # print(type('#{}'.format(timeseq[0])))
+        # print(type(row[0]), type(row[0].encode("utf-8")), type(row[0].encode("utf-8")))
+        lis = [(s+'#{}'.format(t)).encode("utf-8") for s, t in zip(row, timeseq)]
+        print(lis)
+        spamwriter.writerow(lis)
 
 fold2 = lines[elems_per_fold:2*elems_per_fold]
 fold2_t = timeseqs[elems_per_fold:2*elems_per_fold]
 fold2_t2 = timeseqs2[elems_per_fold:2*elems_per_fold]
 fold2_t3 = timeseqs3[elems_per_fold:2*elems_per_fold]
 fold2_t4 = timeseqs4[elems_per_fold:2*elems_per_fold]
-with open('output_files/folds/fold2.csv', 'wb') as csvfile:
+with open('output_files/folds/fold2.csv', 'w') as csvfile:
     spamwriter = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-    for row, timeseq in izip(fold2, fold2_t):
-        spamwriter.writerow([unicode(s).encode("utf-8") +'#{}'.format(t) for s, t in izip(row, timeseq)])
+    for row, timeseq in zip(fold2, fold2_t):
+        # spamwriter.writerow([str(s).encode("utf-8") +'#{}'.format(t) for s, t in zip(row, timeseq)])
+        lis = [(s+'#{}'.format(t)).encode("utf-8") for s, t in zip(row, timeseq)]
+        print(lis)
+        spamwriter.writerow(lis)
 
 fold3 = lines[2*elems_per_fold:]
 fold3_t = timeseqs[2*elems_per_fold:]
 fold3_t2 = timeseqs2[2*elems_per_fold:]
 fold3_t3 = timeseqs3[2*elems_per_fold:]
 fold3_t4 = timeseqs4[2*elems_per_fold:]
-with open('output_files/folds/fold3.csv', 'wb') as csvfile:
+with open('output_files/folds/fold3.csv', 'w') as csvfile:
     spamwriter = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-    for row, timeseq in izip(fold3, fold3_t):
-        spamwriter.writerow([unicode(s).encode("utf-8") +'#{}'.format(t) for s, t in izip(row, timeseq)])
+    for row, timeseq in zip(fold3, fold3_t):
+        # spamwriter.writerow([str(s).encode("utf-8") +'#{}'.format(t) for s, t in zip(row, timeseq)])
+        lis = [(s+'#{}'.format(t)).encode("utf-8") for s, t in zip(row, timeseq)]
+        print(lis)
+        spamwriter.writerow(lis)
 
 lines = fold1 + fold2
 lines_t = fold1_t + fold2_t
@@ -252,7 +263,7 @@ next_chars_t = []
 next_chars_t2 = []
 next_chars_t3 = []
 next_chars_t4 = []
-for line, line_t, line_t2, line_t3, line_t4 in izip(lines, lines_t, lines_t2, lines_t3, lines_t4):
+for line, line_t, line_t2, line_t3, line_t4 in zip(lines, lines_t, lines_t2, lines_t3, lines_t4):
     for i in range(0, len(line), step):
         if i==0:
             continue
@@ -306,7 +317,8 @@ for i, sentence in enumerate(sentences):
         else:
             y_a[i, target_char_indices[c]] = softness/(len(target_chars)-1)
     y_t[i] = next_t/divisor
-    np.set_printoptions(threshold=np.nan)
+    # np.set_printoptions(threshold=np.nan)
+    np.set_printoptions(threshold=np.inf, linewidth=np.nan)
 
 # build the model: 
 print('Build model...')
