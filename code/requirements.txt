@@ -1,0 +1,6 @@
+keras
+tensorflow >=2
+numpy
+csv
+datetime
+copy

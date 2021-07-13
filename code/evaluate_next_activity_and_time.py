@@ -12,7 +12,6 @@ import csv
 import copy
 import numpy as np
 import distance
-from itertools import izip
 from jellyfish._jellyfish import damerau_levenshtein_distance
 import unicodecsv
 from sklearn import metrics
@@ -54,7 +53,7 @@ for row in spamreader:
         line = ''
         times = []
         numlines+=1
-    line+=unichr(int(row[1])+ascii_offset)
+    line+=chr(int(row[1])+ascii_offset)
     timesincelastevent = datetime.fromtimestamp(time.mktime(t))-datetime.fromtimestamp(time.mktime(lasteventtime))
     timesincecasestart = datetime.fromtimestamp(time.mktime(t))-datetime.fromtimestamp(time.mktime(casestarttime))
     timediff = 86400 * timesincelastevent.days + timesincelastevent.seconds
@@ -102,7 +101,7 @@ chars = map(lambda x : set(x),lines)
 chars = list(set().union(*chars))
 chars.sort()
 target_chars = copy.copy(chars)
-chars.remove('!')
+# chars.remove('!')
 print('total chars: {}, target chars: {}'.format(len(chars), len(target_chars)))
 char_indices = dict((c, i) for i, c in enumerate(chars))
 indices_char = dict((i, c) for i, c in enumerate(chars))
@@ -143,7 +142,7 @@ for row in spamreader:
         line = ''
         times = []
         numlines+=1
-    line+=unichr(int(row[1])+ascii_offset)
+    line+=chr(int(row[1])+ascii_offset)
     timesincelastevent = datetime.fromtimestamp(time.mktime(t))-datetime.fromtimestamp(time.mktime(lasteventtime))
     timesincecasestart = datetime.fromtimestamp(time.mktime(t))-datetime.fromtimestamp(time.mktime(casestarttime))
     midnight = datetime.fromtimestamp(time.mktime(t)).replace(hour=0, minute=0, second=0, microsecond=0)
@@ -231,7 +230,7 @@ with open('output_files/results/next_activity_and_time_%s' % eventlog, 'wb') as 
     spamwriter.writerow(["CaseID", "Prefix length", "Groud truth", "Predicted", "Levenshtein", "Damerau", "Jaccard", "Ground truth times", "Predicted times", "RMSE", "MAE"])
     for prefix_size in range(2,maxlen):
         print(prefix_size)
-        for line, caseid, times, times3 in izip(lines, caseids, lines_t, lines_t3):
+        for line, caseid, times, times3 in zip(lines, caseids, lines_t, lines_t3):
             times.append(0)
             cropped_line = ''.join(line[:prefix_size])
             cropped_times = times[:prefix_size]

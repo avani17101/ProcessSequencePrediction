@@ -10,25 +10,19 @@ Author: Niek Tax
 '''
 
 from __future__ import print_function, division
-from keras.models import Sequential, Model
-from keras.layers.core import Dense
-from keras.layers.recurrent import LSTM, GRU, SimpleRNN
-from keras.layers import Input
-from keras.utils.data_utils import get_file
-from keras.optimizers import Nadam
-from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
-from keras.layers.normalization import BatchNormalization
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import LSTM
+from tensorflow.keras.layers import Input
+from tensorflow.keras.optimizers import Nadam
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
+from tensorflow.keras.layers import BatchNormalization
 from collections import Counter
-import unicodecsv
 import numpy as np
-import random
-import sys
-import os
 import copy
 import csv
 import time
 from datetime import datetime
-from math import log
 
 
 eventlog = "helpdesk.csv"
